@@ -3,9 +3,15 @@ import sys
 import argparse
 
 '''
-Argument1: HPGL file to be plotted.
-Argument2: Plotter com port.
+A function to handle the plotting of an Inkscape generated HPGL file.
+Using the hpglCommands.py script it chops the hpgl file up into pieces
+small enough for HP plotters to handle, whule implementing a simple
+RTS/CTS flow control system. 
 
+Parameters such as the ctsdelay may need to be adjusted for different
+systems. Buffer overflows can result from using the same parameters 
+between a usbTTY device and a normal tty/tyyS device. Increase to 
+reduce buffer overflow problems on start of plot. 
 
 '''
 
@@ -18,7 +24,7 @@ argParser.add_argument(
     required=True)
 
 argParser.add_argument(
-    '-p'
+    '-p',
     '--pen',
     type=int,
     default=1,
@@ -48,7 +54,7 @@ argParser.add_argument(
 argParser.add_argument(
     '-c',
     '--ctsdelay',
-    default=0.01,
+    default=0.015,
     type=int,
     required=False)
     
@@ -59,7 +65,10 @@ argParser.add_argument(
     default=False,
     required=False)
 
-args = argParser.parse_args()
+try:
+    args = argParser.parse_args()
+except:
+    quit()
 
 with open(args.file) as file:
     fileInformation = file.readlines()
